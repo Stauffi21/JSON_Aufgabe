@@ -24,19 +24,25 @@ void parser_JSON::setFile(){
 }
 
 void parser_JSON::changeFile(){
+    //File lesen
     QString text;
     QFile file(pfad);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     text = file.readAll();
     file.close();
+
+    //Parsen und ändern
     QJsonDocument document = QJsonDocument::fromJson(text.toUtf8());
-    qDebug() << document;
+    //qDebug() << document;
     QJsonObject object= document.object();
     QJsonValueRef ref = object.find("Address").value();
-    QJsonObject m_addvalue = ref.toObject();
-    m_addvalue.insert("Street","India");//set the value you want to modify
-    ref=m_addvalue; //assign the modified object to reference
-    document.setObject(object); // set to json document
+    QJsonObject addvalue = ref.toObject();
+    addvalue.insert("Street","India");
+    addvalue.insert("City", "Zürich");
+    ref=addvalue;
+    document.setObject(object);
+
+    //in File schreiben
     file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate);
     file.write(document.toJson());
     file.close();
